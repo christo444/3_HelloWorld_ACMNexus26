@@ -1,9 +1,17 @@
 // Configuration
 let config = {
-  apiUrl: 'http://localhost:3000',
+  apiUrl: 'http://127.0.0.1:8000',
   threshold: 10,
   autoScan: false,
-  scanInterval: 10
+  scanInterval: 2
+};
+
+let burstScanState = {
+  active: false,
+  intervalId: null,
+  scans: 0,
+  matches: 0,
+  inFlight: false
 };
 
 // Load configuration
@@ -17,9 +25,8 @@ chrome.storage.sync.get(['config'], (result) => {
 // Check backend connection
 async function checkBackendConnection() {
   try {
-    const response = await fetch(`${config.apiUrl}/health`);
-    const data = await response.json();
-    return data.status === 'ok';
+    const response = await fetch(`${config.apiUrl}/vault`);
+    return response.ok;
   } catch (error) {
     return false;
   }
@@ -106,13 +113,13 @@ document.getElementById('saveFrameBtn').addEventListener('click', async () => {
   
   // Prepare form data
   const formData = new FormData();
-  formData.append('frame', blob, 'frame.jpg');
+  formData.append('file', blob, 'frame.jpg');
   formData.append('videoUrl', frame.videoUrl);
   formData.append('videoTitle', frame.videoTitle);
   formData.append('timestamp', frame.timestamp);
   
   try {
-    const response = await fetch(`${config.apiUrl}/api/frames`, {
+    const response = await fetch(`${config.apiUrl}/upload`, {
       method: 'POST',
       body: formData
     });
@@ -137,52 +144,147 @@ document.getElementById('cancelBtn').addEventListener('click', () => {
   chrome.storage.local.remove('tempFrame');
 });
 
-// Scan button
+function updateBurstUI() {
+  const startBtn = document.getElementById('startBurstBtn');
+  const endBtn = document.getElementById('endBurstBtn');
+  const statusBox = document.getElementById('burstStatus');
+  const stateText = document.getElementById('burstStateText');
+  const scanCountText = document.getElementById('burstScanCount');
+  const matchCountText = document.getElementById('burstMatchCount');
+
+  statusBox.style.display = burstScanState.active ? 'block' : 'none';
+  const burstSeconds = Math.max(1, config.scanInterval / 2);
+  stateText.textContent = burstScanState.active ? `Scanning every ${burstSeconds}s` : 'Idle';
+  scanCountText.textContent = burstScanState.scans;
+  matchCountText.textContent = burstScanState.matches;
+
+  startBtn.disabled = burstScanState.active || document.getElementById('scanBtn').disabled;
+  endBtn.disabled = !burstScanState.active;
+}
+
+function captureFrameFromActiveTab() {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      chrome.tabs.sendMessage(tab.id, { action: 'captureFrame' }, (response) => {
+        if (chrome.runtime.lastError) {
+          reject(new Error('Could not capture frame. Please refresh the page and try again.'));
+          return;
+        }
+        if (!response || !response.success) {
+          reject(new Error(response?.error || 'Failed to capture frame for scanning'));
+          return;
+        }
+        resolve(response);
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+async function verifyCapturedFrame(frameResponse) {
+  const apiResponse = await fetch(`${config.apiUrl}/verify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      image: frameResponse.dataUrl,
+      url: frameResponse.videoUrl
+    })
+  });
+
+  if (!apiResponse.ok) {
+    throw new Error(`Backend error: ${apiResponse.status}`);
+  }
+
+  return apiResponse.json();
+}
+
+async function runSingleScan({ silent = false } = {}) {
+  const frameResponse = await captureFrameFromActiveTab();
+  const data = await verifyCapturedFrame(frameResponse);
+  displayScanResults(data);
+
+  if (burstScanState.active) {
+    burstScanState.scans += 1;
+    if (data.match) {
+      burstScanState.matches += 1;
+      loadMatches();
+    }
+    updateBurstUI();
+  }
+
+  if (!silent && data.match) {
+    loadMatches();
+  }
+
+  return data;
+}
+
+function stopBurstScan(showAlert = true) {
+  if (burstScanState.intervalId) {
+    clearInterval(burstScanState.intervalId);
+  }
+  burstScanState.active = false;
+  burstScanState.intervalId = null;
+  burstScanState.inFlight = false;
+  updateBurstUI();
+
+  if (showAlert) {
+    alert(`Burst scan ended. Total scans: ${burstScanState.scans}, matches: ${burstScanState.matches}`);
+  }
+}
+
+// Scan button (single run)
 document.getElementById('scanBtn').addEventListener('click', async () => {
   try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    
-    chrome.tabs.sendMessage(tab.id, { action: 'captureFrame' }, async (response) => {
-      if (chrome.runtime.lastError) {
-        alert('Error: Could not scan frame. Please refresh the page and try again.');
-        console.error('Scan error:', chrome.runtime.lastError.message);
-        return;
-      }
-      
-      if (response && response.success) {
-        try {
-          // Convert data URL to blob
-          const blob = await (await fetch(response.dataUrl)).blob();
-          
-          // Prepare form data
-          const formData = new FormData();
-          formData.append('frame', blob, 'frame.jpg');
-          formData.append('videoUrl', response.videoUrl);
-          formData.append('videoTitle', response.videoTitle);
-          formData.append('timestamp', response.timestamp);
-          formData.append('threshold', config.threshold);
-          
-          const apiResponse = await fetch(`${config.apiUrl}/api/compare`, {
-            method: 'POST',
-            body: formData
-          });
-          
-          if (!apiResponse.ok) {
-            throw new Error(`Backend error: ${apiResponse.status}`);
-          }
-          
-          const data = await apiResponse.json();
-          displayScanResults(data);
-        } catch (error) {
-          alert('Error scanning frame: ' + error.message);
-        }
-      } else {
-        alert('Error: ' + (response?.error || 'Failed to capture frame for scanning'));
-      }
-    });
+    await runSingleScan();
   } catch (error) {
-    alert('Error: ' + error.message);
+    alert('Error scanning frame: ' + error.message);
   }
+});
+
+// Start burst scan button
+document.getElementById('startBurstBtn').addEventListener('click', async () => {
+  if (burstScanState.active) {
+    return;
+  }
+
+  burstScanState.active = true;
+  burstScanState.scans = 0;
+  burstScanState.matches = 0;
+  burstScanState.inFlight = false;
+  updateBurstUI();
+
+  try {
+    await runSingleScan({ silent: true });
+  } catch (error) {
+    stopBurstScan(false);
+    alert('Could not start burst scan: ' + error.message);
+    return;
+  }
+
+  const burstIntervalMs = Math.max(1000, (config.scanInterval * 1000) / 2);
+
+  burstScanState.intervalId = setInterval(async () => {
+    if (!burstScanState.active || burstScanState.inFlight) {
+      return;
+    }
+
+    burstScanState.inFlight = true;
+    try {
+      await runSingleScan({ silent: true });
+    } catch (error) {
+      console.error('Burst scan cycle failed:', error.message);
+    } finally {
+      burstScanState.inFlight = false;
+    }
+  }, burstIntervalMs);
+});
+
+// End burst scan button
+document.getElementById('endBurstBtn').addEventListener('click', () => {
+  stopBurstScan(true);
 });
 
 // Display scan results
@@ -192,24 +294,22 @@ function displayScanResults(data) {
   
   resultsSection.style.display = 'block';
   
-  if (data.isCopyrightMatch) {
+  if (data.match) {
     resultsSection.className = 'scan-results match-found';
     resultsContent.innerHTML = `
-      <h3>⚠️ Copyright Match Detected!</h3>
-      <p><strong>Matches found:</strong> ${data.matchesFound}</p>
-      ${data.matches.map(match => `
-        <div class="match-item">
-          <p><strong>Original Video:</strong> ${match.videoTitle || 'Unknown'}</p>
-          <p><strong>Similarity:</strong> ${match.distance}/64 (${Math.round((1 - match.distance/64) * 100)}% similar)</p>
-          <button class="btn btn-danger btn-sm" onclick="reportMatch(${match.frameId})">🚨 Report Copyright Violation</button>
-        </div>
-      `).join('')}
+      <h3>🚨 Copyright Match Detected!</h3>
+      <p><strong>Hash:</strong> ${data.hash.substring(0, 16)}...</p>
+      <p><strong>Matched Hash:</strong> ${data.matched_hash ? data.matched_hash.substring(0, 16) + '...' : 'N/A'}</p>
+      <p><strong>Location:</strong> ${data.location?.city || 'Unknown'}, ${data.location?.country || 'Unknown'}</p>
+      <p><strong>Source IP:</strong> ${data.ip || 'Unknown'}</p>
+      <button class="btn btn-danger btn-sm" onclick="alert('Report filed - match documented in system')">🚨 File Report</button>
     `;
   } else {
     resultsSection.className = 'scan-results no-match';
     resultsContent.innerHTML = `
       <h3>✅ No Copyright Match</h3>
-      <p>This video appears to be original content.</p>
+      <p>This content appears to be original or not in the vault.</p>
+      <p><strong>Hash:</strong> ${data.hash.substring(0, 16)}...</p>
     `;
   }
 }
@@ -219,10 +319,10 @@ window.reportMatch = async function(matchId) {
   const notes = prompt('Add notes about this copyright violation (optional):');
   
   try {
-    const response = await fetch(`${config.apiUrl}/api/reports`, {
+    const response = await fetch(`${config.apiUrl}/reports`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ matchId, notes })
+      body: JSON.stringify({ alert_id: matchId, notes })
     });
     
     const data = await response.json();
@@ -237,61 +337,133 @@ window.reportMatch = async function(matchId) {
   }
 };
 
+// File report from match card in Matches tab
+window.fileReportFromMatch = async function(alert) {
+  console.log('fileReportFromMatch called with:', alert);
+  
+  try {
+    if (!alert || !alert.url) {
+      throw new Error('Invalid alert data');
+    }
+    
+    // Store alert data in chrome storage for dashboard to access
+    await chrome.storage.local.set({ pendingReport: alert });
+    console.log('Alert stored in chrome storage');
+    
+    // File report on backend
+    const reportData = {
+      title: `Copyright Match Detected - ${new Date(alert.timestamp * 1000).toLocaleDateString()}`,
+      url: alert.url,
+      platform: 'Unknown',
+      description: `Hash: ${alert.hash.substring(0, 16)}...\nIP: ${alert.ip || 'Unknown'}\nLocation: ${alert.location?.city || 'Unknown'}, ${alert.location?.country || 'Unknown'}`
+    };
+    
+    console.log('Sending report data:', reportData);
+    
+    const response = await fetch(`${config.apiUrl}/reports`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(reportData)
+    });
+    
+    console.log('Report response status:', response.status);
+    
+    const data = await response.json();
+    console.log('Report response data:', data);
+    
+    if (response.ok) {
+      alert('✅ Report filed successfully! Opening Dashboard...');
+    } else {
+      alert('Report filed: ' + (data.message || 'Report submitted'));
+    }
+    
+    // Open the dashboard reports page
+    console.log('Opening dashboard reports page');
+    const dashboardReportsUrl = 'file:///C:/Users/hp/OneDrive/Desktop/nexus/3_HelloWorld_ACMNexus26/frontend/reports.html';
+    
+    chrome.tabs.create({ url: dashboardReportsUrl }, function(tab) {
+      console.log('Dashboard opened in tab:', tab.id);
+    });
+  } catch (error) {
+    console.error('Error filing report:', error);
+    alert('⚠️ Error filing report: ' + error.message + '\n\nCheck console for details (F12)');
+  }
+};
+
+
 // Load gallery
 async function loadGallery() {
   try {
-    const response = await fetch(`${config.apiUrl}/api/frames`);
+    const response = await fetch(`${config.apiUrl}/vault`);
     const data = await response.json();
+    const hashes = data.hashes || [];
     
     const galleryGrid = document.getElementById('galleryGrid');
     const frameCount = document.getElementById('frameCount');
     
-    frameCount.textContent = data.frames.length;
+    frameCount.textContent = hashes.length;
     
-    if (data.frames.length === 0) {
-      galleryGrid.innerHTML = '<p class="empty-message">No frames stored yet</p>';
+    if (hashes.length === 0) {
+      galleryGrid.innerHTML = '<p class="empty-message">No content in vault yet</p>';
       return;
     }
     
-    galleryGrid.innerHTML = data.frames.map(frame => `
-      <div class="gallery-item" onclick="viewFrame(${frame.id})">
-        <img src="${config.apiUrl}/storage/${frame.image_path}" alt="Frame">
+    galleryGrid.innerHTML = hashes.map((hash, idx) => `
+      <div class="gallery-item">
+        <div style="background: linear-gradient(45deg, #667eea, #764ba2); width: 100%; height: 150px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+          Hash ${idx + 1}
+        </div>
         <div class="gallery-item-info">
-          <p>${new Date(frame.capture_date).toLocaleDateString()}</p>
+          <p style="font-size: 11px; word-break: break-all;">${hash.substring(0, 32)}...</p>
         </div>
       </div>
     `).join('');
   } catch (error) {
     console.error('Error loading gallery:', error);
+    document.getElementById('galleryGrid').innerHTML = '<p class="empty-message">Error loading vault</p>';
   }
 }
 
 // Load matches
 async function loadMatches() {
   try {
-    const response = await fetch(`${config.apiUrl}/api/compare/matches`);
+    const response = await fetch(`${config.apiUrl}/alerts`);
     const data = await response.json();
     
     const matchesList = document.getElementById('matchesList');
     const matchCount = document.getElementById('matchCount');
     
-    matchCount.textContent = data.matches.length;
+    matchCount.textContent = data.count || 0;
     
-    if (data.matches.length === 0) {
+    if (!data.alerts || data.alerts.length === 0) {
       matchesList.innerHTML = '<p class="empty-message">No matches detected yet</p>';
       return;
     }
     
-    matchesList.innerHTML = data.matches.map(match => `
+    // Store alerts in window for access by buttons
+    window.alertsCollection = data.alerts;
+    
+    matchesList.innerHTML = data.alerts.map((alert, idx) => `
       <div class="match-card">
-        <h4>Copyright Match Detected</h4>
-        <p><strong>Original:</strong> ${match.original_video_title || 'Unknown'}</p>
-        <p><strong>Matched:</strong> ${match.matched_video_title || 'Unknown'}</p>
-        <p><strong>Distance:</strong> <span class="distance">${match.hamming_distance}</span></p>
-        <p><strong>Detected:</strong> ${new Date(match.detected_date).toLocaleString()}</p>
-        <button class="btn btn-danger" onclick="reportMatch(${match.id})">🚨 Report Violation</button>
+        <h4>🚨 Copyright Match Detected</h4>
+        <p><strong>Hash:</strong> ${alert.hash.substring(0, 16)}...</p>
+        <p><strong>Source:</strong> <a href="${alert.url}" target="_blank" style="color: #667eea;">${alert.url}</a></p>
+        <p><strong>IP:</strong> ${alert.ip || 'Unknown'}</p>
+        <p><strong>Location:</strong> ${alert.location?.city || 'Unknown'}, ${alert.location?.country || 'Unknown'}</p>
+        <p><strong>Detected:</strong> ${new Date(alert.timestamp * 1000).toLocaleString()}</p>
+        <button class="btn btn-primary" data-alert-index="${idx}" style="background-color: #667eea; width: 100%; margin-top: 8px; padding: 6px 12px; border: none; border-radius: 4px; color: white; cursor: pointer; font-size: 14px;">📋 File Report to Dashboard</button>
       </div>
     `).join('');
+    
+    // Attach event listeners to all report buttons
+    document.querySelectorAll('[data-alert-index]').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const idx = parseInt(this.getAttribute('data-alert-index'));
+        const alert = window.alertsCollection[idx];
+        fileReportFromMatch(alert);
+      });
+    });
   } catch (error) {
     console.error('Error loading matches:', error);
   }
@@ -324,6 +496,11 @@ document.getElementById('saveSettingsBtn').addEventListener('click', () => {
   
   chrome.storage.sync.set({ config }, () => {
     alert('Settings saved!');
+    if (burstScanState.active) {
+      stopBurstScan(false);
+      alert('Burst scan stopped to apply new settings. Start it again to use the new interval.');
+    }
+    updateBurstUI();
   });
 });
 
@@ -355,6 +532,8 @@ async function updateVideoInfo() {
         
         document.getElementById('captureBtn').disabled = false;
         document.getElementById('scanBtn').disabled = false;
+        document.getElementById('startBurstBtn').disabled = burstScanState.active;
+        updateBurstUI();
       } else {
         showNoVideo();
       }
@@ -370,6 +549,10 @@ function showNoVideo() {
   document.getElementById('videoDetails').style.display = 'none';
   document.getElementById('captureBtn').disabled = true;
   document.getElementById('scanBtn').disabled = true;
+  document.getElementById('startBurstBtn').disabled = true;
+  if (burstScanState.active) {
+    stopBurstScan(false);
+  }
 }
 
 function formatTime(seconds) {
@@ -380,6 +563,7 @@ function formatTime(seconds) {
 
 // Initialize
 updateConnectionStatus();
+updateBurstUI();
 
 // Delay video info update to give content script time to load
 setTimeout(() => {

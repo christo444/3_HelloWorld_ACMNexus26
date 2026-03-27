@@ -1,3 +1,26 @@
+## 18:45
+
+### Features Added
+- Fixed frame upload parameter naming (file vs frame) resolving save failures
+- Added "File Report to Dashboard" button to extension matches tab with event listener delegation
+- Implemented burst scanning mode with Start/End controls in capture tab (auto-scan every configurable interval)
+- Increased image matching sensitivity: Hamming distance threshold 10→20, added normalize_image() for consistent hashing
+- Made burst scanning faster: runs at half configured interval (default 2s interval = 1s burst cadence)
+- Launched dual-server dashboard: backend API on 127.0.0.1:8000 + frontend on 127.0.0.1:5500
+- Verified all endpoints operational and dashboard accessible on localhost
+
+### Files Modified
+- extension/popup/popup.js - Fixed file parameter in upload, refactored scan logic into reusable helpers, added burst state machine with interval management, added event listeners for report buttons
+- extension/popup/popup.html - Added Start Burst and End Burst buttons, added burst status panel showing scan count and matches
+- extension/popup/popup.css - Added .burst-status styling with blue info box
+- backend/main.py - Added normalize_image() function, increased Hamming distance threshold from 10 to 20, integrated normalization in both /upload and /verify endpoints
+
+### Issues Faced
+- Parameter mismatch in extension (sending 'frame' instead of 'file') prevented image uploads—**Resolution:** Changed formData.append('frame', ...) to formData.append('file', ...)
+- Inline onclick with JSON serialization caused parsing errors—**Resolution:** Switched to data attributes with event listener delegation pattern
+- Image matching too strict (false negatives on similar frames)—**Resolution:** Increased threshold to 20 and added image preprocessing (resize to 256×256, convert to RGB)
+- PowerShell quoting issues with Python invocation—**Resolution:** Used call operator & with quoted path and --app-dir flag for uvicorn
+
 ## 09:00
 
 ### Features Added
