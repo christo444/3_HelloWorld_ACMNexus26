@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraLock - Upload Sports Content</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        h1 {
+            color: #ff4444;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-align: center;
+        }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        .upload-box {
+            background: #2d2d2d;
+            border: 3px dashed #ff4444;
+            border-radius: 10px;
+            padding: 60px 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 30px;
+        }
+        .upload-box:hover {
+            background: #333;
+            border-color: #ff6666;
+        }
+        .upload-box.dragover {
+            background: #3d3d3d;
+            border-color: #ff8888;
+            transform: scale(1.02);
+        }
+        .upload-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        button {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px;
+        }
+        button:hover {
+            background: #ff6666;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 68, 68, 0.3);
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .preview {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .preview img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .result {
+            background: #2d2d2d;
+            border-left: 5px solid #ff4444;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            display: none;
+        }
+        .result.show {
+            display: block;
+        }
+        .result.success {
+            border-left-color: #44ff44;
+        }
+        .result.error {
+            border-left-color: #ff4444;
+        }
+        .vault-info {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        .vault-count {
+            font-size: 3em;
+            color: #ff4444;
+            font-weight: bold;
+        }
+        a {
+            color: #ff4444;
+            text-decoration: none;
+        }
+        a:hover {
+            color: #ff6666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ AuraLock Vault</h1>
+        <p class="subtitle">Upload Sports Images/Videos to Protect</p>
+        
+        <div class="upload-box" id="uploadBox">
+            <div class="upload-icon">📤</div>
+            <h2>Click or Drag Sports Content Here</h2>
+            <p style="margin-top: 10px; color: #888;">Support: JPG, PNG, GIF, MP4, WEBM</p>
+            <input type="file" id="fileInput" accept="image/*,video/*">
+        </div>
+
+        <div class="preview" id="preview"></div>
+
+        <div style="text-align: center;">
+            <button id="uploadBtn" disabled>Upload to Vault</button>
+            <button id="clearBtn">Clear Selection</button>
+        </div>
+
+        <div class="result" id="result"></div>
+
+        <div class="vault-info">
+            <p style="color: #888; margin-bottom: 10px;">Protected Content in Vault</p>
+            <div class="vault-count" id="vaultCount">Loading...</div>
+            <button onclick="refreshVaultCount()" style="margin-top: 10px; font-size: 0.9em; padding: 10px 20px;">Refresh Count</button>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="index.html">← Back to Command Center</a>
+        </div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'http://127.0.0.1:8000';
+        const uploadBox = document.getElementById('uploadBox');
+        const fileInput = document.getElementById('fileInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const preview = document.getElementById('preview');
+        const result = document.getElementById('result');
+        let selectedFile = null;
+
+        // Click to upload
+        uploadBox.addEventListener('click', () => fileInput.click());
+
+        // File selection
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                selectedFile = e.target.files[0];
+                showPreview(selectedFile);
+                uploadBtn.disabled = false;
+            }
+        });
+
+        // Drag and drop
+        uploadBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadBox.classList.add('dragover');
+        });
+
+        uploadBox.addEventListener('dragleave', () => {
+            uploadBox.classList.remove('dragover');
+        });
+
+        uploadBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadBox.classList.remove('dragover');
+            
+            if (e.dataTransfer.files.length > 0) {
+                selectedFile = e.dataTransfer.files[0];
+                showPreview(selectedFile);
+                uploadBtn.disabled = false;
+            }
+        });
+
+        function showPreview(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                if (file.type.startsWith('image/')) {
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                } else if (file.type.startsWith('video/')) {
+                    preview.innerHTML = `<video src="${e.target.result}" controls style="max-width: 100%; border-radius: 10px;"></video>`;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Upload to vault
+        uploadBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = 'Uploading...';
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showResult(`✅ Success! "${selectedFile.name}" added to vault.<br>Hash: ${data.hash}<br>Vault Size: ${data.vault_size}`, 'success');
+                    refreshVaultCount();
+                } else {
+                    showResult(`⚠️ ${data.message || 'Upload failed'}`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ Error: ${error.message}`, 'error');
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = 'Upload to Vault';
+            }
+        });
+
+        // Clear selection
+        clearBtn.addEventListener('click', () => {
+            selectedFile = null;
+            fileInput.value = '';
+            preview.innerHTML = '';
+            uploadBtn.disabled = true;
+            result.classList.remove('show');
+        });
+
+        function showResult(message, type) {
+            result.innerHTML = message;
+            result.className = `result ${type} show`;
+        }
+
+        // Get vault count
+        async function refreshVaultCount() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/vault`);
+                const data = await response.json();
+                document.getElementById('vaultCount').textContent = data.count || 0;
+            } catch (error) {
+                document.getElementById('vaultCount').textContent = 'Error';
+            }
+        }
+
+        // Initial load
+        refreshVaultCount();
+    </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraLock Command - Live Alert Feed</title>
+    <!-- Leaflet.js Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .upload-link {
+            background: #ff4444;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .upload-link:hover {
+            background: #ff6666;
+            transform: translateY(-2px);
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .alerts {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .alert-card {
+            background: #1e1e1e;
+            padding: 15px;
+            border-left: 4px solid #ff4444;
+            border-radius: 4px;
+        }
+        .timestamp {
+            color: #888;
+            font-size: 0.8em;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>🛡️ AuraLock Command Center</h1>
+            <p>Live Monitoring - Sports Content Protection</p>
+        </div>
+        <a href="upload.html" class="upload-link">📤 Upload Content to Vault</a>
+    </div>
+
+    <!-- Map container -->
+    <div id="map"></div>
+
+    <!-- Alert Feed -->
+    <h2>Live Alert Feed</h2>
+    <div class="alerts" id="alert-feed">
+        <!-- Alerts will be injected here via JS -->
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

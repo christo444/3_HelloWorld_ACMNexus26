@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page - Sports Stream</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #ff4444;
+        }
+        .video-container {
+            background: #000;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        video, img {
+            width: 100%;
+            max-width: 800px;
+            display: block;
+            margin: 0 auto;
+            border-radius: 5px;
+        }
+        .info {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .status {
+            padding: 10px;
+            background: #444;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        button {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+        }
+        button:hover {
+            background: #ff6666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏀 Test Sports Stream Page</h1>
+        <p>This is a test page to simulate a sports video stream that the AuraLock extension will monitor.</p>
+
+        <div class="info">
+            <h3>Instructions:</h3>
+            <ol>
+                <li>Make sure the backend is running: <code>cd backend && uvicorn main:app --reload</code></li>
+                <li>Make sure the Chrome extension is installed and active</li>
+                <li>Upload a sports image to the vault via the dashboard upload page</li>
+                <li>Display that same image on this page using the controls below</li>
+                <li>The extension should detect it and send an alert!</li>
+            </ol>
+        </div>
+
+        <div class="video-container">
+            <h2>Video Player Simulation</h2>
+            <p><strong>IMPORTANT:</strong> Use images you've uploaded to vault, or select a file from your computer:</p>
+            
+            <input type="file" id="fileInput" accept="image/*" style="width: 100%; padding: 10px; font-size: 1em; margin: 10px 0;">
+            <button onclick="loadFromFile()">Load Selected File</button>
+            <button onclick="createVideoFromCurrentImage()">Create Video from Image</button>
+            
+            <p style="margin-top: 20px; color: #888;">Or enter a direct image URL (must support CORS):</p>
+            <input type="text" id="imageUrl" placeholder="Enter image URL" style="width: 100%; padding: 10px; font-size: 1em; margin: 10px 0;">
+            <button onclick="loadImage()">Load from URL</button>
+            
+            <div id="mediaContainer" style="margin-top: 20px;"></div>
+        </div>
+
+        <div class="status">
+            <h3>Extension Status:</h3>
+            <div id="status">
+                <p>✅ Extension should be running and monitoring this page</p>
+                <p>🔍 Check browser console (F12) for AuraLock logs</p>
+                <p>🎯 If a match is found, you'll see alerts in the console and dashboard</p>
+            </div>
+        </div>
+
+        <div class="info">
+            <h3>How to Test:</h3>
+            <ol>
+                <li><strong>Download</strong> a sports image (right-click → Save image as):
+                    <ul>
+                        <li><a href="https://images.unsplash.com/photo-1461896836934-ffe607ba8211" target="_blank">Soccer/Football</a></li>
+                        <li><a href="https://images.unsplash.com/photo-1546519638-68e109498ffc" target="_blank">Basketball</a></li>
+                        <li><a href="https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff" target="_blank">Tennis</a></li>
+                    </ul>
+                </li>
+                <li><strong>Upload</strong> that image to vault (via upload.html)</li>
+                <li><strong>Load</strong> the same image here using "Load Selected File" button</li>
+                <li><strong>Create Video</strong> to simulate a streaming video</li>
+                <li><strong>Wait 10 seconds</strong> - check console and dashboard for alerts!</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        let currentImageData = null;
+
+        function loadFromFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentImageData = e.target.result;
+                    document.getElementById('mediaContainer').innerHTML = 
+                        `<img src="${currentImageData}" alt="Test Sports Content" style="max-width: 800px;">`;
+                    console.log('✅ Image loaded from file:', file.name);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('Please select a file first');
+            }
+        }
+
+        function loadImage() {
+            const url = document.getElementById('imageUrl').value;
+            if (url) {
+                currentImageData = url;
+                document.getElementById('mediaContainer').innerHTML = 
+                    `<img src="${url}" alt="Test Sports Content" crossorigin="anonymous" style="max-width: 800px;">`;
+                console.log('✅ Image loaded from URL:', url);
+            }
+        }
+
+        function createVideoFromCurrentImage() {
+            if (!currentImageData) {
+                alert('Please load an image first (either from file or URL)');
+                return;
+            }
+
+            // Create a canvas-based "video" that the extension can capture
+            const canvas = document.createElement('canvas');
+            canvas.width = 800;
+            canvas.height = 600;
+            const ctx = canvas.getContext('2d');
+            
+            const img = new Image();
+            img.onload = function() {
+                // Create video element
+                const video = document.createElement('video');
+                video.width = 800;
+                video.height = 600;
+                video.autoplay = true;
+                video.loop = true;
+                video.muted = true;
+                video.controls = true;
+                
+                // Draw image to canvas repeatedly
+                setInterval(() => {
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                }, 100);
+                
+                // Convert canvas to video stream
+                const stream = canvas.captureStream(30); // 30 FPS
+                video.srcObject = stream;
+                
+                document.getElementById('mediaContainer').innerHTML = '';
+                document.getElementById('mediaContainer').appendChild(video);
+                console.log('✅ Video created - Extension should start capturing frames');
+                console.log('⏱️ Wait 10 seconds and check dashboard for alerts...');
+            };
+            
+            img.onerror = function() {
+                alert('Failed to load image. Make sure it supports CORS or use a local file.');
+            };
+            
+            img.src = currentImageData;
+        }
+
+        // Log extension status
+        console.log('🛡️ AuraLock Test Page Ready');
+        console.log('📝 Instructions:');
+        console.log('1. Select a sports image from your computer');
+        console.log('2. Click "Load Selected File"');
+        console.log('3. Click "Create Video from Image"');
+        console.log('4. Wait 10 seconds for detection');
+    </script>
+</body>
+</html>
