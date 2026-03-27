@@ -19,21 +19,31 @@ A **16-hour hackathon** across various domains where innovation meets execution.
 
 ---
 
-## 🧠 Project Details (To be filled by participants)
+## 🧠 Project Details
 
-```md
 ### 🏷️ Project Name:
-<Your Project Name>
+**AuraLock** - Sports Content Anti-Piracy System
 
 ### 🎯 Chosen Domain:
-<One from the given domains>
+**Digital Asset Protection**
 
 ### ❗ Problem Statement:
-<What problem are you solving?>
+Sports leagues, broadcasters, and content creators lose billions annually to video piracy. Illegal streaming sites and unauthorized sharing of sports content (live matches, highlights, images) across the internet is difficult to detect and prevent in real-time. Traditional methods rely on manual monitoring which is slow, expensive, and ineffective at scale.
 
 ### 💡 Solution:
-<How does your project solve the problem?>
-```
+**AuraLock** is an automated sports content protection system that uses computer vision and perceptual hashing to detect pirated sports videos and images in real-time across the internet. The system consists of:
+
+1. **Browser Extension** - Monitors all video playback on webpages, captures frames every 3 seconds
+2. **Backend API** - Analyzes frames using perceptual hashing (pHash) to identify protected content even if modified
+3. **Dashboard** - Real-time alerts with geographic visualization showing where pirated content is being accessed
+
+**Key Features:**
+- ✅ Real-time detection of pirated sports content
+- ✅ Perceptual hashing detects content even if quality changed, cropped, or watermarked
+- ✅ IP geolocation to identify piracy sources globally
+- ✅ Live dashboard with map visualization
+- ✅ Easy content upload to vault for protection
+- ✅ Automated monitoring requiring no manual intervention
 
 ---
 
@@ -90,7 +100,9 @@ To ensure fairness and transparency, we have designed a structured development a
 
 ---
 
-## 📁 Repository Structure
+---
+
+## 🚀 Quick Start Guide
 
 
 Repository must not be private. The template Repository includes:
