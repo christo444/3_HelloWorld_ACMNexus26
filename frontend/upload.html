@@ -15,12 +15,48 @@
             background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
             color: #ffffff;
             min-height: 100vh;
-            padding: 20px;
         }
+
+        .navbar {
+            background: #0a0a0a;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #ff4444;
+        }
+
+        .navbar-logo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .navbar-right {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-link {
+            background: #ff4444;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover {
+            background: #ff6666;
+            transform: translateY(-2px);
+        }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 40px;
+            padding: 40px 20px;
         }
         h1 {
             color: #ff4444;
@@ -130,6 +166,14 @@
     </style>
 </head>
 <body>
+    <div class="navbar">
+        <div class="navbar-logo">🛡️ AuraLock</div>
+        <div class="navbar-right">
+            <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+            <a href="index.html" class="nav-link">← Back</a>
+        </div>
+    </div>
+
     <div class="container">
         <h1>🛡️ AuraLock Vault</h1>
         <p class="subtitle">Upload Sports Images/Videos to Protect</p>
@@ -154,10 +198,6 @@
             <p style="color: #888; margin-bottom: 10px;">Protected Content in Vault</p>
             <div class="vault-count" id="vaultCount">Loading...</div>
             <button onclick="refreshVaultCount()" style="margin-top: 10px; font-size: 0.9em; padding: 10px 20px;">Refresh Count</button>
-        </div>
-
-        <div style="text-align: center; margin-top: 30px;">
-            <a href="index.html">← Back to Command Center</a>
         </div>
     </div>
 

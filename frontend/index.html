@@ -13,8 +13,50 @@
             color: #ffffff;
             font-family: 'Inter', sans-serif;
             margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background: #0a0a0a;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #00d4ff;
+        }
+
+        .navbar-left h1 {
+            margin: 0;
+            display: inline-block;
+            margin-right: 30px;
+        }
+
+        .navbar-right {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-link {
+            background: #00d4ff;
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover {
+            background: #00e6ff;
+            transform: translateY(-2px);
+        }
+
+        .container {
             padding: 20px;
         }
+
         .header {
             display: flex;
             justify-content: space-between;
@@ -61,21 +103,33 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <div>
-            <h1>🛡️ AuraLock Command Center</h1>
-            <p>Live Monitoring - Sports Content Protection</p>
+    <div class="navbar">
+        <div class="navbar-left">
+            <h1>🛡️ AuraLock</h1>
         </div>
-        <a href="upload.html" class="upload-link">📤 Upload Content to Vault</a>
+        <div class="navbar-right">
+            <a href="dashboard.html" class="nav-link">📊 Full Dashboard</a>
+            <a href="reports.html" class="nav-link">⚖️ Reports</a>
+            <a href="upload.html" class="nav-link">📤 Upload Content</a>
+        </div>
     </div>
 
-    <!-- Map container -->
-    <div id="map"></div>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Live Alert Feed</h1>
+                <p>Real-time monitoring for sports content piracy</p>
+            </div>
+        </div>
 
-    <!-- Alert Feed -->
-    <h2>Live Alert Feed</h2>
-    <div class="alerts" id="alert-feed">
-        <!-- Alerts will be injected here via JS -->
+        <!-- Map container -->
+        <div id="map"></div>
+
+        <!-- Alert Feed -->
+        <h2>Live Alert Feed</h2>
+        <div class="alerts" id="alert-feed">
+            <!-- Alerts will be injected here via JS -->
+        </div>
     </div>
 
     <script src="app.js"></script>
