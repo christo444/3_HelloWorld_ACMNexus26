@@ -1,0 +1,7 @@
+# Backend Storage Directory
+
+This directory stores:
+- `/frames/` - Captured video frames
+- `copyright.db` - SQLite database
+
+**Note:** Files in this directory are not committed to git.
