@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamTrace Sports - Official Broadcaster</title>
+    <style>
+        body {
+            font-family: 'Inter', 'Roboto', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header {
+            width: 100%;
+            background-color: #1e293b;
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
+        h1 {
+            font-size: 1.5rem;
+            margin: 0;
+            color: #38bdf8;
+            font-weight: 700;
+        }
+        .live-indicator {
+            background-color: #ef4444;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background-color: white;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        main {
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 2rem;
+            padding: 0 1rem;
+            box-sizing: border-box;
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            background-color: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .description {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #1e293b;
+            border-radius: 8px;
+        }
+        .description h2 {
+            margin-top: 0;
+            font-size: 1.25rem;
+        }
+        .description p {
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>StreamTrace Network</h1>
+        <div class="live-indicator"><div class="live-dot"></div> LIVE</div>
+    </header>
+    <main>
+        <div class="video-container">
+            <video autoplay loop muted playsinline>
+                <source src="match.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        <div class="description">
+            <h2>Official Live Sports Stream</h2>
+            <p>Welcome to the official StreamTrace Network broadcast. You are watching an exclusive, authorized live stream. Any unauthorized reproduction, rebroadcast, or distribution of this telecast without the express written consent of StreamTrace is strictly prohibited.</p>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,223 +1,86 @@
-# 🚀 Welcome to NEXUS
+# StreamTrace – Live Sports Stream Piracy Detection (Simulation)
 
-### Conducted by | CLIQUE x ACM MITS |
+StreamTrace is a simulation that demonstrates how an original live sports stream broadcaster can detect unauthorized restreaming of their content on independent piracy websites.
 
-### 📅 March 27 & 28
+## Project Structure
 
-### 📍 Muthoot Institute of Technology and Science
+* `original-site/`: Simulates the official broadcaster's website (port 8000). Contains an HTML player that automatically streams a dummy sports video (`match.mp4`).
+* `fake-site/`: Simulates a piracy website (port 9000). This independent interface points directly to the `match.mp4` stream hosted by the official site to restream it over their own unauthorized ad-filled UI.
+* `detector/`: A Python-based Detection Engine script that opens a headless browser, screenshots both URLs concurrently, and hashes their video images per frame to detect real-time visual similarity exceeding an 80% threshold.
 
-<p align="center">
-  <img src="template_acm.png" width="500"/>
-  <img src="template_clique.png" width="250"/>
-</p>
+## Setup Instructions & Dependency Installation
 
----
+### Prerequisites
 
-### 📖 Description
+You must have **Python 3** and **Chrome/Chromium** installed on your machine.
 
-A **16-hour hackathon** across various domains where innovation meets execution. Build, collaborate, and push your limits.
+**Install the libraries:**
 
----
+We recommend using a virtual environment. From the `streamtrace` directory:
 
-## 🧠 Project Details (To be filled by participants)
+```bash
+# Optional: Create a virtual environment
+python3 -m venv venv
+source venv/bin/activate
 
-```md
-### 🏷️ Project Name:
-<Your Project Name>
-
-### 🎯 Chosen Domain:
-<One from the given domains>
-
-### ❗ Problem Statement:
-<What problem are you solving?>
-
-### 💡 Solution:
-<How does your project solve the problem?>
+# Install the required Python packages
+pip install -r requirements.txt
 ```
 
----
+This installs `selenium` for browser automation, `opencv-python` for visual operations, `pillow` and `imagehash` for perceptual screenshot hashing.
 
-## 🎯 Hackathon Domains
+## How to Run the Simulation
 
-Participants must choose **one** of the following domains:
-
-1️⃣ Digital Asset Protection
-2️⃣ Smart Supply Chains
-3️⃣ Digital Health & Predictive Care
-4️⃣ Climate Intelligence
-5️⃣ Cybersecurity & Threat Intelligence
-
----
-
-## ⚙️ Hackathon Workflow & Rules
-
-To ensure fairness and transparency, we have designed a structured development and tracking system.
-
----
-
-### 🔗 GitHub Template
-
-👉 **Template Repo:** `{link}`
-
-* All teams must **fork this repository**
-* Fork name must follow:
-
+### 1. Run the Original Site
+Open a new terminal, navigate to `streamtrace/original-site`, and start a local HTTP server:
+```bash
+cd original-site
+python3 -m http.server 8000
 ```
-<TeamId>_<TeamName>_ACMNexus26
+*The StreamTrace Official Broadcast is now live at `http://localhost:8000`*
+
+### 2. Run the Fake Site
+Open another terminal, navigate to `streamtrace/fake-site`, and start a second HTTP server:
+```bash
+cd fake-site
+python3 -m http.server 9000
+```
+*The Piracy Site is now restreaming the original content live at `http://localhost:9000`*
+
+### 3. Run the Detection Script
+Open a final terminal window, navigate to `streamtrace/detector`, and execute the detection engine script:
+```bash
+cd detector
+python3 detect.py
 ```
 
-* Example:
+## Expected Output
+
+When the script finishes loading the URLs, taking snapshots, and computing the visual hash differences, it displays the following output format directly in your terminal:
 
 ```
-12_CodeWarriors_ACMNexus26
+====================================
+STREAMTRACE PIRACY DETECTION ENGINE
+====================================
+Opening: http://localhost:8000
+Screenshot saved to screenshots/original.png
+Calculating perceptual hash for original broadcast...
+
+Scanning monitored target URLs...
+Opening: http://localhost:9000
+Screenshot saved to screenshots/target_fake_site.png
+
+----- DETECTION RESULT -----
+Comparison: Original Site vs Fake Site
+Target URL: http://localhost:9000
+Similarity Score: 100.00%
+Status: ⚠️ Possible unauthorized restream detected!
+----------------------------
 ```
 
-* You may rename the repository **after the event ends**
-
----
-
-
----
-
-## 👥 Participation Rules
-
-* Team Size: **2–4 members**
-* **Pre-created projects are strictly not allowed**
-* All work must be done **during the hackathon timeframe**
-* Only registered team members must participate
-* Do **not attack or interfere** with college infrastructure/network
-* Follow all instructions from the organizing team
-
----
-
-## 📁 Repository Structure
-
-
-Repository must not be private. The template Repository includes:
+If the Fake Site were loaded with completely distinct, non-matching content (or the video had stopped), the console output would score below the 80% threshold to reflect the content differences:
 
 ```
-AGENTS.md
-README.md
-CHANGELOG.md
-/progress/
+Similarity Score: 15.62%
+Status: ✅ Not matching (Different content)
 ```
-
----
-
-## ⏱️ Hourly Progress Requirements
-
-Every hour, teams must:
-
-* Make **at least one commit**
-* Add **at least one progress update** inside `/progress/`
-
-Progress can include:
-
-* Screenshots
-* Screen recordings
-* Dataset snapshots
-* Any meaningful proof of work
-
-### 📂 Progress Format
-
-```
-/progress
-1.png
-2.png
-3.png
-```
-
-* Files must be **numbered sequentially**
-* Each file should reflect **actual development progress**
-
----
-
-## 📝 Changelog Rules (VERY IMPORTANT)
-
-Every commit must be reflected in `CHANGELOG.md`.
-
-You can:
-
-* Update it per commit, OR
-* Update it periodically (but must be complete at the end)
-
----
-
-### 📌 Changelog Format
-
-```md
-## HH:MM
-
-### Features Added
-- Added login functionality
-- Implemented API integration
-
-### Files Modified
-- auth.js
-- login.jsx
-
-### Issues Faced
-- Firebase auth errors
-- API timeout issues
-```
-
----
-
-💡 Tip:
-Instructions are already included in `AGENTS.md`.
-You can simply prompt it to **"CREATE CHANGELOG"** to follow the format.
-
----
-
-## 📖 Documentation
-
-We have provided:
-
-* Examples
-* Guidelines
-
-Inside:
-
-* `AGENTS.md`
-* `README.md`
-
-Please follow them strictly.
-
----
-
-## 🔍 Monitoring & Verification
-
-* Random checks will be conducted during the hackathon
-* Organizers may:
-
-  * Inspect commit history
-  * Review changelog consistency
-  * Verify progress evidence
-
----
-
-## 👨‍💻 Team Collaboration Rules
-
-* All members must be added as **collaborators**
-* By the end of the hackathon:
-
-  * **Each member must have at least one commit**
-
----
-
-## ⚠️ Disqualification Criteria
-
-* Use of **pre-built / pre-developed projects**
-* Fake or manipulated commit history
-* Missing hourly commits or progress updates
-* Incomplete or inconsistent changelog
-
----
-
-## 🏁 Final Note
-
-Focus on building, learning, and enjoying the experience.
-
----
-
-🔥 **Build. Break. Innovate. See you at NEXUS.**
