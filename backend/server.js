@@ -39,6 +39,20 @@ app.use('/api/reports', reportsRouter);
 // Static files for stored frames
 app.use('/storage', express.static(STORAGE_DIR));
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({ 
+    status: 'ok',
+    message: 'Copyright Detection Backend is running',
+    endpoints: {
+      health: '/health',
+      frames: '/api/frames',
+      compare: '/api/compare',
+      reports: '/api/reports'
+    }
+  });
+});
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Copyright Detection Backend is running' });
