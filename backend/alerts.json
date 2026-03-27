@@ -1,0 +1,362 @@
+[
+  {
+    "match": true,
+    "hash": "a6812aa49ef826fe",
+    "matched_hash": "a0c12fa69e7c26d6",
+    "timestamp": 1774641985,
+    "url": "https://www.youtube.com/watch?v=nhBBcv65rDg",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "city": null,
+      "country": null,
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "853c61717b670ec3",
+    "matched_hash": "862678703b132f7b",
+    "timestamp": 1774644116,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": 0.0,
+      "longitude": 0.0,
+      "city": "Unknown",
+      "country": "Unknown",
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "873c61717b430fc3",
+    "matched_hash": "862678703b132f7b",
+    "timestamp": 1774644117,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": 0.0,
+      "longitude": 0.0,
+      "city": "Unknown",
+      "country": "Unknown",
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "a32e787879431dc3",
+    "matched_hash": "862678703b132f7b",
+    "timestamp": 1774644118,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "city": null,
+      "country": null,
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "873e61707b430fc3",
+    "matched_hash": "862678703b132f7b",
+    "timestamp": 1774644119,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "city": null,
+      "country": null,
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "872e71707b430fc3",
+    "matched_hash": "862678703b132f7b",
+    "timestamp": 1774644119,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "city": null,
+      "country": null,
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "872e71707b430fc3",
+    "matched_hash": "862678703b132f7b",
+    "timestamp": 1774644119,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "city": null,
+      "country": null,
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "873e61707b430fc3",
+    "matched_hash": "862678703b132f7b",
+    "timestamp": 1774644119,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "city": null,
+      "country": null,
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "a33e787879411dc3",
+    "matched_hash": "862678703b132f7b",
+    "timestamp": 1774644120,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "city": null,
+      "country": null,
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "8d3e41233b770eca",
+    "matched_hash": "8d3e41233b770eca",
+    "timestamp": 1774644178,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "city": null,
+      "country": null,
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "893c63677e660ec2",
+    "matched_hash": "8d3e41233b770eca",
+    "timestamp": 1774644179,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "city": null,
+      "country": null,
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "873c61717b630ec3",
+    "matched_hash": "862678703b132f7b",
+    "timestamp": 1774644179,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "city": null,
+      "country": null,
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "a32e787879431dc3",
+    "matched_hash": "862678703b132f7b",
+    "timestamp": 1774644179,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": 0.0,
+      "longitude": 0.0,
+      "city": "Unknown",
+      "country": "Unknown",
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "872e71707b430fc3",
+    "matched_hash": "862678703b132f7b",
+    "timestamp": 1774644179,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "city": null,
+      "country": null,
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "873e61707b430fc3",
+    "matched_hash": "862678703b132f7b",
+    "timestamp": 1774644179,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "city": null,
+      "country": null,
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "872e787879431dc3",
+    "matched_hash": "862678703b132f7b",
+    "timestamp": 1774644179,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "city": null,
+      "country": null,
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "8d1c01677f660ed3",
+    "matched_hash": "8d3e41233b770eca",
+    "timestamp": 1774644513,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": 0.0,
+      "longitude": 0.0,
+      "city": "Unknown",
+      "country": "Unknown",
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "8d3e48333b730eca",
+    "matched_hash": "862678703b132f7b",
+    "timestamp": 1774644513,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": 0.0,
+      "longitude": 0.0,
+      "city": "Unknown",
+      "country": "Unknown",
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "891c23677b670ed2",
+    "matched_hash": "8d3e41233b770eca",
+    "timestamp": 1774644513,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": 0.0,
+      "longitude": 0.0,
+      "city": "Unknown",
+      "country": "Unknown",
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "873c61717b430fc3",
+    "matched_hash": "862678703b132f7b",
+    "timestamp": 1774644514,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": 0.0,
+      "longitude": 0.0,
+      "city": "Unknown",
+      "country": "Unknown",
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "8d3c63677a660ec2",
+    "matched_hash": "8d3e41233b770eca",
+    "timestamp": 1774644514,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": 0.0,
+      "longitude": 0.0,
+      "city": "Unknown",
+      "country": "Unknown",
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "873e70707b430fc3",
+    "matched_hash": "862678703b132f7b",
+    "timestamp": 1774644514,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": 0.0,
+      "longitude": 0.0,
+      "city": "Unknown",
+      "country": "Unknown",
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "852e683439730feb",
+    "matched_hash": "862678703b132f7b",
+    "timestamp": 1774646030,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": 0.0,
+      "longitude": 0.0,
+      "city": "Unknown",
+      "country": "Unknown",
+      "ip": "127.0.0.1"
+    }
+  },
+  {
+    "match": true,
+    "hash": "873e61707b430fc3",
+    "matched_hash": "862678703b132f7b",
+    "timestamp": 1774646033,
+    "url": "https://www.youtube.com/watch?v=xiTp-EoOiQE",
+    "ip": "127.0.0.1",
+    "location": {
+      "latitude": null,
+      "longitude": null,
+      "city": null,
+      "country": null,
+      "ip": "127.0.0.1"
+    }
+  }
+]

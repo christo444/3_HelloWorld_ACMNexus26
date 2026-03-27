@@ -88,6 +88,15 @@ def decode_base64_image(base64_str: str) -> Image.Image:
     image_data = base64.b64decode(base64_str)
     return Image.open(BytesIO(image_data))
 
+def normalize_image(img: Image.Image) -> Image.Image:
+    """Normalize image for consistent hashing: convert to RGB, resize to 256x256"""
+    # Convert to RGB if necessary
+    if img.mode != 'RGB':
+        img = img.convert('RGB')
+    # Resize to standard size for consistent hashing
+    img = img.resize((256, 256), Image.Resampling.LANCZOS)
+    return img
+
 @app.post("/verify")
 async def verify_frame(request: Request):
     data = await request.json()
@@ -102,11 +111,14 @@ async def verify_frame(request: Request):
         # Convert base64 to PIL Image
         img = decode_base64_image(base64_image)
         
+        # Normalize image for consistent hashing
+        img = normalize_image(img)
+        
         # Generate a 64-bit pHash of the frame
         frame_hash = imagehash.phash(img)
         
         # Compare to "Vault" using Hamming Distance
-        THRESHOLD = 10  # max hamming distance to be considered a match
+        THRESHOLD = 20  # max hamming distance to be considered a match
         match_found = False
         matched_hash = None
         
@@ -163,6 +175,9 @@ async def upload_sports_content(file: UploadFile = File(...)):
         contents = await file.read()
         img = Image.open(BytesIO(contents))
         
+        # Normalize image for consistent hashing
+        img = normalize_image(img)
+        
         # Generate perceptual hash
         content_hash = imagehash.phash(img)
         hash_str = str(content_hash)
@@ -203,3 +218,56 @@ async def clear_alerts():
     if os.path.exists(ALERTS_FILE):
         os.remove(ALERTS_FILE)
     return {"success": True, "message": "All alerts cleared"}
+
+@app.get("/reports")
+async def get_reports():
+    """Retrieve all copyright reports"""
+    # Since we're using JSON-based alerts, we'll return them as reports
+    alerts = load_alerts()
+    reports = []
+    for idx, alert in enumerate(alerts, 1):
+        reports.append({
+            "id": idx,
+            "match": True,
+            "matched_video_title": f"Pirated Content {idx}",
+            "matched_video_url": alert.get("url", "Unknown"),
+            "status": "detected" if idx % 2 == 0 else "pending",
+            "notes": f"Detected piracy from {alert.get('location', {}).get('city', 'Unknown')}",
+            "timestamp": alert.get("timestamp", 0),
+            "ip": alert.get("ip", "Unknown"),
+            "location": alert.get("location", {})
+        })
+    return {"reports": reports, "count": len(reports)}
+
+@app.post("/reports")
+async def create_report(request: Request):
+    """Create a new copyright report from an alert"""
+    data = await request.json()
+    alert_id = data.get("alert_id")
+    notes = data.get("notes", "")
+    
+    if not alert_id:
+        return {"success": False, "error": "Alert ID is required"}
+    
+    # In a real system, this would save to database
+    # For now, we track it as a report variant
+    return {
+        "success": True,
+        "reportId": f"RPT-{int(time.time())}",
+        "message": "Copyright report filed successfully"
+    }
+
+@app.get("/stats")
+async def get_stats():
+    """Get dashboard statistics"""
+    alerts = load_alerts()
+    vault = VAULT_HASHES
+    
+    return {
+        "framesProcessed": len(alerts) + len(vault),
+        "matchesDetected": len(alerts),
+        "vaultHashes": len(vault),
+        "alertsBuffered": len(alerts),
+        "backend_status": "online",
+        "scanner_status": "enabled"
+    }
