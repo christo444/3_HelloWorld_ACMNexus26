@@ -22,28 +22,44 @@ A **16-hour hackathon** across various domains where innovation meets execution.
 ## 🧠 Project Details
 
 ### 🏷️ Project Name:
-**AuraLock** - Sports Content Anti-Piracy System
+**Copyright Shield** - Video Copyright Detection System
 
 ### 🎯 Chosen Domain:
 **Digital Asset Protection**
 
 ### ❗ Problem Statement:
-Sports leagues, broadcasters, and content creators lose billions annually to video piracy. Illegal streaming sites and unauthorized sharing of sports content (live matches, highlights, images) across the internet is difficult to detect and prevent in real-time. Traditional methods rely on manual monitoring which is slow, expensive, and ineffective at scale.
+Content creators lose billions annually to video piracy. Unauthorized copying and redistribution of original video content across the internet is difficult to detect. Current manual monitoring methods are slow, expensive, and ineffective at scale. Creators need an automated way to protect their content and detect copyright violations in real-time.
 
 ### 💡 Solution:
-**AuraLock** is an automated sports content protection system that uses computer vision and perceptual hashing to detect pirated sports videos and images in real-time across the internet. The system consists of:
+**Copyright Shield** is a browser-based copyright detection system that uses perceptual hashing to identify pirated video content. The system enables content creators to protect their videos and automatically detect copyright violations.
 
-1. **Browser Extension** - Monitors all video playback on webpages, captures frames every 3 seconds
-2. **Backend API** - Analyzes frames using perceptual hashing (pHash) to identify protected content even if modified
-3. **Dashboard** - Real-time alerts with geographic visualization showing where pirated content is being accessed
+**System Components:**
+1. **Browser Extension** (Chrome/Edge) - Captures frames from videos, scans for matches, provides UI
+2. **Backend API** (Node.js + Express) - Generates perceptual hashes, compares frames, stores data
+3. **SQLite Database** - Stores captured frames, hashes, matches, and copyright reports
+4. **Local Storage** - Keeps all data private and secure on user's machine
+
+**How It Works:**
+1. **Protect Your Content**: Capture frames from your original videos and store them with perceptual hashes
+2. **Automatic Detection**: Browser extension scans videos as they play, comparing against stored frames
+3. **Smart Matching**: Uses dHash (difference hash) to detect similar content even if modified (cropped, compressed, color-adjusted)
+4. **Report Violations**: When matches found, creators can file copyright violation reports with evidence
 
 **Key Features:**
-- ✅ Real-time detection of pirated sports content
-- ✅ Perceptual hashing detects content even if quality changed, cropped, or watermarked
-- ✅ IP geolocation to identify piracy sources globally
-- ✅ Live dashboard with map visualization
-- ✅ Easy content upload to vault for protection
-- ✅ Automated monitoring requiring no manual intervention
+- 🎥 **Frame Capture**: Extract frames from any web video (YouTube, Vimeo, etc.)
+- 🔍 **Perceptual Hashing**: Detects similar content even if modified (Hamming distance ≤ 10)
+- 🛡️ **Real-time Scanning**: Auto-scan mode monitors videos while playing
+- 🚨 **Copyright Alerts**: Visual notifications when protected content detected
+- 📊 **Match Gallery**: View all captured frames and detected matches
+- ⚙️ **Configurable**: Adjust similarity thresholds (strict to loose matching)
+- 🔒 **Privacy-First**: All data stored locally, no cloud services required
+
+**Technical Highlights:**
+- Perceptual hashing resistant to video modifications
+- Fast comparison using bit-level Hamming distance
+- Manifest V3 Chrome extension with modern APIs
+- RESTful backend with proper separation of concerns
+- Efficient SQLite storage with indexed lookups
 
 ---
 

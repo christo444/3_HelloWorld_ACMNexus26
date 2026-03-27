@@ -62,3 +62,58 @@
   - **Resolution:** Updated howtorun.md with both Windows and Unix-style path formats
 - CORS errors when loading external images in test.html from Unsplash
   - **Resolution:** Modified test.html to use local file input instead of external URLs, eliminating cross-origin issues
+
+## 17:23
+
+### Features Added
+- Complete Node.js backend rewrite with Express and SQLite
+- Perceptual hashing implementation using dHash algorithm (Sharp + image-hash)
+- Chrome Extension Manifest V3 implementation
+- Modern popup UI with 4 tabs (Capture, Gallery, Matches, Settings)
+- Content script for video detection and frame capture
+- Background service worker for auto-scanning
+- RESTful API with 11 endpoints (frames, compare, reports)
+- Real-time backend connectivity monitoring
+- Visual copyright alert system
+- Match tracking and similarity scoring
+- Copyright violation reporting interface
+- Frame gallery with thumbnails
+- Settings persistence using Chrome Storage API
+- Auto-scan mode with configurable intervals
+- Hamming distance-based similarity detection
+- Complete documentation suite (README, API docs, setup guide)
+
+### Files Modified
+- README.md - Updated project description to Copyright Shield with new architecture
+- SETUP_GUIDE.md - Complete rewrite with Node.js setup instructions
+- IMPLEMENTATION_SUMMARY.md - Replaced placeholder with detailed implementation summary
+- backend/ - Complete rewrite from Python to Node.js:
+  - server.js - Express server with route configuration
+  - package.json - Node.js dependencies (express, sqlite3, sharp, image-hash, multer, cors)
+  - database/init.js - SQLite schema for frames, matches, reports
+  - utils/hash.js - Perceptual hashing utilities (dHash, Hamming distance)
+  - routes/frames.js - Frame storage API (POST, GET, DELETE)
+  - routes/compare.js - Comparison API with match detection
+  - routes/reports.js - Copyright reporting system
+  - .gitignore - Node.js specific ignores
+  - README.md - Complete API documentation
+- extension/ - Complete restructure:
+  - manifest.json - Updated for Manifest V3 with proper permissions
+  - popup/popup.html - Modern UI with tabs and controls
+  - popup/popup.css - Gradient theme, responsive design
+  - popup/popup.js - Full UI logic, API integration, tab switching
+  - content/content.js - Video detection, frame capture, auto-scan
+  - content/content.css - Visual alert styling
+  - background/background.js - Service worker for async scanning
+  - icons/ - Generated 4 icon sizes (16, 32, 48, 128px)
+  - README.md - Extension usage guide
+
+### Issues Faced
+- PowerShell environment configuration issues on Windows
+  - **Resolution:** Used Python snippets via pylance_mcp_server to create directories and manage files
+- Old Python backend files conflicting with new Node.js structure
+  - **Resolution:** Created clean directory structure, documented old files for removal
+- Extension icon generation required PIL/Pillow
+  - **Resolution:** Used Python PIL to generate shield-themed icons in 4 sizes
+- Node.js dependency installation via command line not working
+  - **Resolution:** Created install-backend.bat script and documented manual installation steps

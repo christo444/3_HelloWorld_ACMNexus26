@@ -1,32 +1,109 @@
-# AuraLock - Quick Setup & Testing Guide
+# Copyright Shield - Setup Guide
 
-## ✅ What's Been Implemented
+Complete setup instructions for the Copyright Shield video copyright detection system.
 
-All features are now fully implemented! Here's what you have:
+## 📋 Table of Contents
+1. [Prerequisites](#prerequisites)
+2. [Backend Setup](#backend-setup)
+3. [Extension Setup](#extension-setup)
+4. [Verification](#verification)
+5. [Usage](#usage)
+6. [Troubleshooting](#troubleshooting)
 
-### Backend (backend/main.py)
-- ✅ POST /verify - Analyzes video frames for piracy detection
-- ✅ GET /alerts - Retrieves all stored piracy alerts
-- ✅ POST /upload - Upload sports content to vault for protection
-- ✅ GET /vault - View all protected content hashes
-- ✅ DELETE /alerts - Clear alerts (for testing)
-- ✅ IP Geolocation - Automatic location detection using ipapi.co
-- ✅ Perceptual hashing - Detects content even if modified
-- ✅ JSON storage - Alerts and vault persist in JSON files
+## Prerequisites
 
-### Browser Extension (extension/)
-- ✅ Monitors all video elements on any webpage
-- ✅ Captures frames every 3 seconds
-- ✅ Sends frames to backend for analysis
-- ✅ Console alerts when piracy detected
+### Required Software
+- **Node.js** 16 or higher ([Download](https://nodejs.org/))
+- **npm** (comes with Node.js)
+- **Chrome** or **Edge** browser
 
-### Dashboard (dashboard/)
-- ✅ index.html - Live command center with map
-- ✅ upload.html - Upload interface for protecting content
-- ✅ test.html - Testing page for verification
-- ✅ Real-time alert polling (5 second intervals)
-- ✅ Geographic visualization with Leaflet.js
-- ✅ Displays IP, location, URL, hash for each alert
+### Check Installations
+```bash
+node --version   # Should show v16 or higher
+npm --version    # Should show 7 or higher
+```
+
+## Backend Setup
+
+### Step 1: Install Dependencies
+
+Navigate to the backend folder and install packages:
+
+```bash
+cd backend
+npm install
+```
+
+This installs: express, sqlite3, sharp, image-hash, multer, cors, body-parser
+
+### Step 2: Start Backend Server
+
+```bash
+npm start
+```
+
+You should see:
+```
+✅ Database initialized successfully
+🚀 Backend server running on http://localhost:3000
+```
+
+### Step 3: Test Backend
+
+Visit: http://localhost:3000/health
+
+Should return:
+```json
+{
+  "status": "ok",
+  "message": "Copyright Detection Backend is running"
+}
+```
+
+## Extension Setup
+
+### Step 1: Load Extension in Chrome/Edge
+
+1. Open `chrome://extensions/` (or `edge://extensions/`)
+2. Enable "Developer mode" (top-right toggle)
+3. Click "Load unpacked"
+4. Select the `extension` folder
+5. Extension should appear with shield icon
+
+### Step 2: Verify Extension
+
+Click extension icon - should show:
+- Green status: "Backend connected" ✅
+- Red status: "Backend offline" ❌ (start backend first)
+
+## Quick Test
+
+1. Open YouTube video
+2. Click extension icon
+3. Click "📸 Capture Frame"
+4. Click "💾 Save Frame"
+5. Go to "Gallery" tab to see captured frame
+
+## Troubleshooting
+
+### Backend won't start
+- Check Node.js installed: `node --version`
+- Delete node_modules and run `npm install` again
+- Check port 3000 not in use
+
+### Extension shows "Backend offline"
+- Ensure backend running: `cd backend && npm start`
+- Visit http://localhost:3000/health to verify
+- Check Settings tab API URL is correct
+
+### Frame capture not working
+- Refresh the webpage
+- Ensure video is playing
+- Check browser console (F12) for errors
+
+For detailed documentation:
+- Backend API: [backend/README.md](backend/README.md)
+- Extension: [extension/README.md](extension/README.md)
 
 ---
 

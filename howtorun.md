@@ -1,33 +1,269 @@
-# How to Run AuraLock - Complete Guide
+# How to Run Copyright Shield - Complete Guide
 
-## 🚀 Quick Start (3 Main Steps)
+## 🚀 Quick Start (2 Main Steps)
 
 ### **STEP 1: Start the Backend Server** 🧠
 
-Open **Terminal** and run:
+1. **Navigate to backend folder:**
 
-**If using Git Bash / WSL / Linux:**
-```bash
-cd /c/Users/ASUS/Desktop/acm/3_HelloWorld_ACMNexus26/backend
-```
-
-**If using Windows Command Prompt / PowerShell:**
+**Windows Command Prompt / PowerShell:**
 ```bash
 cd C:\Users\ASUS\Desktop\acm\3_HelloWorld_ACMNexus26\backend
 ```
 
-**Or simply navigate from current directory:**
+**Or from project root:**
 ```bash
 cd backend
 ```
 
-Then install dependencies:
+2. **Install Node.js dependencies:**
 
-**If using Python 3.13, install packages individually (recommended):**
 ```bash
-pip install fastapi==0.100.0
-pip install uvicorn==0.22.0
-pip install httpx==0.24.1
+npm install
+```
+
+This will install:
+- express (web framework)
+- sqlite3 (database)
+- sharp (image processing)
+- image-hash (perceptual hashing)
+- multer (file uploads)
+- cors, body-parser
+
+3. **Start the server:**
+
+```bash
+npm start
+```
+
+You should see:
+```
+✅ Database initialized successfully
+🚀 Backend server running on http://localhost:3000
+📁 Storage directory: C:\...\backend\storage
+```
+
+4. **Verify it's working:**
+
+Open browser and visit: **http://localhost:3000/health**
+
+Should return:
+```json
+{
+  "status": "ok",
+  "message": "Copyright Detection Backend is running"
+}
+```
+
+---
+
+### **STEP 2: Load the Browser Extension** 🌐
+
+1. **Open Chrome Extensions Page:**
+   - Type in address bar: `chrome://extensions/`
+   - OR: Click menu (⋮) → Extensions → Manage Extensions
+
+2. **Enable Developer Mode:**
+   - Find toggle in top-right corner
+   - Turn it **ON**
+
+3. **Load the Extension:**
+   - Click "Load unpacked" button
+   - Navigate to: `C:\Users\ASUS\Desktop\acm\3_HelloWorld_ACMNexus26\extension`
+   - Select the **extension** folder (NOT the root)
+   - Click "Select Folder"
+
+4. **Verify Extension Loaded:**
+   - You should see "Copyright Shield" card
+   - Shield icon 🛡️ appears in browser toolbar
+   - Click icon and check status:
+     - ✅ **Green dot + "Backend connected"** = Working!
+     - ❌ **Red dot + "Backend offline"** = Start backend server
+
+---
+
+## 🎮 How to Use
+
+### Protect Your Content (Content Creators)
+
+1. **Open your original video** (YouTube, Vimeo, etc.)
+2. **Click the Copyright Shield icon** in toolbar
+3. **Click "📸 Capture Frame"** to capture current video frame
+4. **Preview** appears - verify it's a good capture
+5. **Click "💾 Save Frame"** to store it as protected content
+6. **Repeat** for multiple scenes (3-5 frames recommended)
+
+### Check for Copyright Violations
+
+1. **Navigate to suspected video**
+2. **Click extension icon**
+3. **Click "🔍 Scan for Matches"**
+4. **View results:**
+   - ✅ **No Match**: Video appears to be original
+   - ⚠️ **Match Found**: Shows similarity score and original video
+   - Click "🚨 Report Violation" to submit report
+
+### Enable Auto-Scan Mode
+
+1. **Click extension icon**
+2. **Go to "Settings" tab**
+3. **Check "Auto-scan videos while playing"**
+4. **Set scan interval** (default: 10 seconds)
+5. Now videos are automatically scanned as they play!
+
+---
+
+## 📊 View Your Data
+
+### Gallery Tab
+- View all captured frames
+- See capture dates
+- Click to view details
+
+### Matches Tab
+- See all detected copyright matches
+- View similarity scores (Hamming distance)
+- Submit violation reports
+
+### Settings Tab
+- **API URL**: Backend address (default: http://localhost:3000)
+- **Threshold**: Similarity sensitivity (1-20, default: 10)
+  - Lower = stricter (1-5: exact matches)
+  - Higher = looser (16-20: allow more variation)
+- **Auto-scan**: Enable/disable automatic scanning
+- **Scan Interval**: How often to scan (5-60 seconds)
+
+---
+
+## 🛠️ Troubleshooting
+
+### Backend Issues
+
+**"Cannot find module" or npm errors:**
+```bash
+cd backend
+del /s /q node_modules
+npm install
+```
+
+**Port 3000 already in use:**
+- Close other programs using port 3000
+- Or change port in `backend/server.js` (line 10):
+  ```javascript
+  const PORT = process.env.PORT || 3001;
+  ```
+
+**Database errors:**
+```bash
+cd backend\storage
+del copyright.db
+cd ..
+npm start
+```
+
+### Extension Issues
+
+**"Backend offline" message:**
+1. Ensure backend is running: `npm start` in backend folder
+2. Visit http://localhost:3000/health to test
+3. Check Settings tab → API URL is correct
+
+**Extension not loading:**
+1. Go to chrome://extensions/
+2. Enable "Developer mode" toggle
+3. Click "Reload" on Copyright Shield card
+4. Check for errors (click "Errors" button if shown)
+
+**"No video detected":**
+1. Refresh the webpage
+2. Make sure video is playing or at least loaded
+3. Try pausing video then clicking capture
+4. Some custom video players may not be supported
+
+---
+
+## 📁 Project Structure
+
+```
+backend/
+├── server.js          # Main server
+├── package.json       # Dependencies
+├── database/
+│   └── init.js       # Database setup
+├── routes/           # API endpoints
+├── utils/            # Hashing utilities
+└── storage/          # Frames and database
+
+extension/
+├── manifest.json      # Extension config
+├── popup/            # User interface
+├── content/          # Page scripts
+├── background/       # Service worker
+└── icons/            # Extension icons
+```
+
+---
+
+## 🔧 Advanced Configuration
+
+### Change Similarity Threshold
+
+**Stricter matching (fewer false positives):**
+- Settings → Threshold: 5
+
+**Looser matching (catch more modifications):**
+- Settings → Threshold: 15
+
+### Disable Auto-Scan for Performance
+
+- Settings → Uncheck "Auto-scan videos while playing"
+- Use manual "🔍 Scan for Matches" button instead
+
+### Clear All Data
+
+**Backend:**
+```bash
+cd backend\storage
+del copyright.db
+del frames\*
+```
+
+**Extension:**
+- chrome://extensions/
+- Click "Remove" on Copyright Shield
+- Reload extension
+
+---
+
+## ✅ System Requirements
+
+- **Node.js**: Version 16 or higher
+- **Browser**: Chrome or Edge (Chromium-based)
+- **OS**: Windows 10+, macOS 10.15+, or Linux
+- **RAM**: 2GB minimum
+- **Disk**: 500MB free space
+
+---
+
+## 📖 Additional Documentation
+
+- **API Reference**: See `backend/README.md`
+- **Extension Guide**: See `extension/README.md`
+- **Setup Guide**: See `SETUP_GUIDE.md`
+
+---
+
+## 🏆 Quick Tips
+
+1. **Capture multiple frames** from different scenes for better detection
+2. **Use auto-scan mode** for continuous protection
+3. **Adjust threshold** based on your needs (strict vs. lenient)
+4. **Check matches regularly** in the Matches tab
+5. **Keep backend running** for real-time protection
+
+---
+
+**You're all set!** 🛡️ Start protecting your content now!
 pip install python-multipart==0.0.6
 pip install Pillow
 pip install ImageHash==4.3.1
