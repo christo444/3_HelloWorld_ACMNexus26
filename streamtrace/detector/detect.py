@@ -11,18 +11,26 @@ from datetime import datetime
 # Configuration
 URLS_TO_MONITOR = [
     {"name": "Original Site", "url": "http://localhost:8000"},
-    {"name": "Fake Site", "url": "http://localhost:9000"}
+    {"name": "Fake Site", "url": "http://localhost:9000"},
+    # Uncomment and replace to scan YouTube live broadcasts!
+    # {"name": "Pirated YouTube Stream", "url": "https://www.youtube.com/watch?v=REPLACE_ME"}
 ]
 THRESHOLD_PERCENTAGE = 80.0
 HASH_BITS = 64.0  # Default hash size for imagehash.phash is 8x8 = 64 bits
 
 def setup_driver():
     chrome_options = Options()
-    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--headless=new") # 'new' mode supports extensions
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--window-size=1280,720")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
+    
+    # Load uBlock Origin Adblocker to automatically bypass YouTube/Twitch pre-roll video ads
+    ublock_path = os.path.abspath("ublock")
+    if os.path.exists(ublock_path):
+        chrome_options.add_argument(f"--load-extension={ublock_path}")
+        
     driver = webdriver.Chrome(options=chrome_options)
     return driver
 
