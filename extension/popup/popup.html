@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Copyright Shield</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🛡️ Copyright Shield</h1>
+      <p class="subtitle">Protect your content from piracy</p>
+    </header>
+
+    <div class="status" id="status">
+      <span class="status-indicator" id="statusIndicator"></span>
+      <span id="statusText">Checking connection...</span>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-button active" data-tab="capture">Capture</button>
+      <button class="tab-button" data-tab="gallery">Gallery</button>
+      <button class="tab-button" data-tab="matches">Matches</button>
+      <button class="tab-button" data-tab="settings">Settings</button>
+    </div>
+
+    <div class="tab-content active" id="capture-tab">
+      <div class="capture-section">
+        <div class="video-info" id="videoInfo">
+          <p id="noVideoMessage">No video detected. Refresh page if video exists.</p>
+          <div id="videoDetails" style="display: none;">
+            <p><strong>Video:</strong> <span id="videoTitle">-</span></p>
+            <p><strong>URL:</strong> <span id="videoUrl">-</span></p>
+            <p><strong>Time:</strong> <span id="videoTime">-</span></p>
+          </div>
+        </div>
+
+        <div class="capture-controls">
+          <button class="btn btn-primary" id="captureBtn" disabled>
+            📸 Capture Frame
+          </button>
+          <button class="btn btn-secondary" id="scanBtn" disabled>
+            🔍 Scan for Matches
+          </button>
+        </div>
+
+        <div class="preview" id="previewSection" style="display: none;">
+          <h3>Captured Frame</h3>
+          <img id="previewImage" alt="Preview">
+          <div class="preview-actions">
+            <button class="btn btn-success" id="saveFrameBtn">💾 Save Frame</button>
+            <button class="btn btn-danger" id="cancelBtn">❌ Cancel</button>
+          </div>
+        </div>
+
+        <div class="scan-results" id="scanResults" style="display: none;">
+          <h3>Scan Results</h3>
+          <div id="resultsContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="gallery-tab">
+      <div class="gallery-header">
+        <h3>Stored Frames (<span id="frameCount">0</span>)</h3>
+        <button class="btn btn-sm" id="refreshGalleryBtn">🔄 Refresh</button>
+      </div>
+      <div class="gallery-grid" id="galleryGrid">
+        <p class="empty-message">No frames stored yet</p>
+      </div>
+    </div>
+
+    <div class="tab-content" id="matches-tab">
+      <div class="matches-header">
+        <h3>Copyright Matches (<span id="matchCount">0</span>)</h3>
+        <button class="btn btn-sm" id="refreshMatchesBtn">🔄 Refresh</button>
+      </div>
+      <div class="matches-list" id="matchesList">
+        <p class="empty-message">No matches detected yet</p>
+      </div>
+    </div>
+
+    <div class="tab-content" id="settings-tab">
+      <div class="settings-section">
+        <h3>Settings</h3>
+        
+        <div class="setting-item">
+          <label for="apiUrl">Backend API URL:</label>
+          <input type="text" id="apiUrl" value="http://localhost:3000" />
+        </div>
+
+        <div class="setting-item">
+          <label for="threshold">Similarity Threshold:</label>
+          <input type="range" id="threshold" min="1" max="20" value="10" />
+          <span id="thresholdValue">10</span>
+          <p class="help-text">Lower = stricter matching (1-5: exact, 6-10: high, 11-15: moderate)</p>
+        </div>
+
+        <div class="setting-item">
+          <label>
+            <input type="checkbox" id="autoScan" />
+            Auto-scan videos while playing
+          </label>
+        </div>
+
+        <div class="setting-item">
+          <label for="scanInterval">Scan Interval (seconds):</label>
+          <input type="number" id="scanInterval" min="5" max="60" value="10" />
+        </div>
+
+        <button class="btn btn-primary" id="saveSettingsBtn">💾 Save Settings</button>
+      </div>
+    </div>
+
+    <footer>
+      <p class="version">v1.0.0 | Made for NEXUS Hackathon</p>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
