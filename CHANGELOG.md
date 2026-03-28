@@ -28,3 +28,14 @@
 
 ### Issues Faced
 - Initial remote image download attempt failed, resolved by using provided local files
+
+## 07:18
+
+### Features Added
+- Added a new changelog entry using the required hackathon format
+
+### Files Modified
+- CHANGELOG.md
+
+### Issues Faced
+- None
