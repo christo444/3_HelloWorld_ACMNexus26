@@ -1,10 +1,10 @@
 DMCA TAKEDOWN NOTICE
-Date: 2026-03-28T03:51:50.498339
+Date: 2026-03-28T06:33:17.339515
 To: Abuse Department
 
 We have detected unauthorized rebroadcasting of our intellectual property.
 
-Infringing URL: http://localhost:9000
-Similarity Confidence: 100.00%
+Infringing URL: https://player.twitch.tv/?channel=malluop&parent=localhost&muted=true
+Similarity Confidence: 96.88%
 
 Please remove this content immediately.

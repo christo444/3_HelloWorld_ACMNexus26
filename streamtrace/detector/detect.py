@@ -11,11 +11,11 @@ from datetime import datetime
 # Configuration
 URLS_TO_MONITOR = [
     {"name": "Original Site", "url": "http://localhost:8000"},
-    {"name": "Fake Site", "url": "http://localhost:9000"},
-    # Uncomment and replace to scan YouTube live broadcasts!
-    # {"name": "Pirated YouTube Stream", "url": "https://www.youtube.com/watch?v=REPLACE_ME"}
+    # IMPORTANT: Start your OBS YouTube Stream, copy the URL of your live video, and paste it here!
+    {"name": "Pirated Twitch Stream", "url": "https://player.twitch.tv/?channel=malluop&parent=localhost&muted=true"}
+
 ]
-THRESHOLD_PERCENTAGE = 80.0
+THRESHOLD_PERCENTAGE = 80.0  # Perfect threshold calibrated for HD stream tracking!
 HASH_BITS = 64.0  # Default hash size for imagehash.phash is 8x8 = 64 bits
 
 def setup_driver():
@@ -34,7 +34,7 @@ def setup_driver():
     driver = webdriver.Chrome(options=chrome_options)
     return driver
 
-def capture_stream_fingerprint(url, site_name, duration_sec=4, interval_sec=0.5):
+def capture_stream_fingerprint(url, site_name, duration_sec=15, interval_sec=0.5):
     """
     Captures a temporal "fingerprint" of the video stream by taking multiple screenshots 
     over a period of time. This handles streaming delays since we compare windows of frames!
@@ -191,6 +191,37 @@ def main():
             
         print("----------------------------\n")
         generate_html_report(original_config['name'], target_name, target['url'], similarity, best_match, is_pirated)
+
+def run_detection_api(orig_url, target_url):
+    urls = [
+        {"name": "Original Site", "url": orig_url},
+        {"name": "Target Stream", "url": target_url}
+    ]
+    if not os.path.exists("screenshots"):
+        os.makedirs("screenshots")
+        
+    results = {}
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        futures = { executor.submit(capture_stream_fingerprint, site["url"], site["name"]): site["name"] for site in urls }
+        for future in as_completed(futures):
+            results[futures[future]] = future.result()
+            
+    if "Original Site" not in results or "Target Stream" not in results:
+        return {"error": "Failed to capture streams"}
+        
+    orig_hashes = results["Original Site"]["hashes"]
+    target_hashes = results["Target Stream"]["hashes"]
+    
+    similarity, best_match = calculate_max_similarity(orig_hashes, target_hashes)
+    is_pirated = similarity >= THRESHOLD_PERCENTAGE
+    
+    generate_html_report("Original Site", "Target Stream", target_url, similarity, best_match, is_pirated)
+    
+    return {
+        "similarity": round(similarity, 2),
+        "is_pirated": bool(is_pirated),
+        "report_file": "report_target_stream.html"
+    }
 
 if __name__ == "__main__":
     main()
