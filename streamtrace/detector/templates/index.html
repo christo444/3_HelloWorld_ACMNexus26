@@ -17,8 +17,9 @@
         
         .input-group { margin-bottom: 25px; }
         .input-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 0.9rem; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px; }
-        .input-group input { width: 100%; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; font-size: 1rem; font-family: 'Inter', monospace; outline: none; transition: all 0.3s ease; box-sizing: border-box; }
-        .input-group input:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
+        .input-group input, .input-group textarea { width: 100%; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; font-size: 1rem; font-family: 'Inter', monospace; outline: none; transition: all 0.3s ease; box-sizing: border-box; }
+        .input-group textarea { min-height: 120px; resize: vertical; }
+        .input-group input:focus, .input-group textarea:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
         
         .btn-scan { width: 100%; padding: 18px; border: none; border-radius: 8px; background: linear-gradient(135deg, #0ea5e9, #3b82f6); color: white; font-size: 1.2rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 10px 20px -10px rgba(59, 130, 246, 0.5); }
         .btn-scan:hover { transform: translateY(-2px); box-shadow: 0 15px 25px -10px rgba(59, 130, 246, 0.7); }
@@ -58,12 +59,12 @@
 
     <div class="glass-panel">
         <div class="input-group">
-            <label>Original Source Broadcast URL</label>
-            <input type="text" id="orig_url" value="http://localhost:8000" placeholder="e.g. http://localhost:8000">
+            <label>Original Source Broadcast Code or URL</label>
+            <textarea id="orig_input" placeholder="Paste original stream URL or embed code (iframe/script/html)"></textarea>
         </div>
         <div class="input-group">
-            <label>Target Suspect Stream URL</label>
-            <input type="text" id="target_url" value="https://player.twitch.tv/?channel=malluop&parent=localhost&muted=true" placeholder="e.g. https://twitch.tv/...">
+            <label>Target Suspect Stream Code or URL</label>
+            <textarea id="target_input" placeholder="Paste suspect stream URL or embed code (iframe/script/html)"></textarea>
         </div>
         <button id="scanBtn" class="btn-scan" onclick="startScan()">Initiate Forensic Scan</button>
 
@@ -83,14 +84,37 @@
 </div>
 
 <script>
+    function extractUrlFromInput(rawInput) {
+        const trimmed = (rawInput || '').trim();
+        if (!trimmed) return '';
+
+        // Handle direct URL paste first
+        if (/^https?:\/\//i.test(trimmed)) {
+            return trimmed;
+        }
+
+        // Handle pasted embed/snippet code by extracting src/href
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(trimmed, 'text/html');
+        const candidate = doc.querySelector('[src], [href]');
+        if (!candidate) return '';
+
+        const extracted = candidate.getAttribute('src') || candidate.getAttribute('href') || '';
+        return /^https?:\/\//i.test(extracted.trim()) ? extracted.trim() : '';
+    }
+
     async function startScan() {
-        const orig = document.getElementById('orig_url').value;
-        const target = document.getElementById('target_url').value;
+        const origRaw = document.getElementById('orig_input').value;
+        const orig = extractUrlFromInput(origRaw);
+        const targetRaw = document.getElementById('target_input').value;
+        const target = extractUrlFromInput(targetRaw);
         const btn = document.getElementById('scanBtn');
         const scanningUI = document.getElementById('scanningUI');
         const resultUI = document.getElementById('resultUI');
 
-        if(!orig || !target) return alert("Please enter both URLs.");
+        if(!orig || !target) {
+            return alert("Please paste valid original and target URLs or embed code.");
+        }
 
         // UI Reset
         btn.disabled = true;
