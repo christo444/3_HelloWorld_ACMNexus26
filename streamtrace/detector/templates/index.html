@@ -4,33 +4,180 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StreamTrace Enterprise | Anti-Piracy Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0f172a; --panel: rgba(30, 41, 59, 0.7); --accent: #38bdf8; --danger: #ef4444; --success: #22c55e; }
-        body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--bg); color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow-x: hidden; }
-        .dashboard { width: 100%; max-width: 800px; padding: 40px; }
-        .header { text-align: center; margin-bottom: 40px; }
-        .header h1 { font-size: 2.5rem; margin: 0; font-weight: 700; letter-spacing: -1px; text-transform: uppercase; background: linear-gradient(90deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .header p { color: #94a3b8; font-size: 1.1rem; margin-top: 10px; }
+        :root {
+            --bg: #081224;
+            --bg2: #10243d;
+            --panel: rgba(10, 22, 41, 0.78);
+            --accent: #1dd3b0;
+            --accent2: #2ec4ff;
+            --danger: #ff5d73;
+            --success: #40d39b;
+            --text: #e5edf7;
+            --muted: #9fb3ca;
+            --edge: rgba(255,255,255,0.12);
+        }
+        body {
+            margin: 0;
+            font-family: 'Space Grotesk', sans-serif;
+            background:
+                radial-gradient(circle at 12% 18%, rgba(46,196,255,0.25), transparent 40%),
+                radial-gradient(circle at 88% 10%, rgba(29,211,176,0.2), transparent 40%),
+                linear-gradient(145deg, var(--bg) 0%, var(--bg2) 100%);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(157, 191, 222, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(157, 191, 222, 0.05) 1px, transparent 1px);
+            background-size: 38px 38px;
+            pointer-events: none;
+            mask-image: radial-gradient(circle at center, black 25%, transparent 80%);
+            z-index: 0;
+        }
+        .dashboard {
+            width: min(900px, 100%);
+            padding: 34px 22px;
+            position: relative;
+            z-index: 1;
+            animation: enterUp 0.7s ease-out;
+        }
+        @keyframes enterUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .header { text-align: center; margin-bottom: 28px; }
+        .header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin: 0;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #d7f3ff;
+            text-shadow: 0 0 22px rgba(46,196,255,0.38);
+        }
+        .header p {
+            color: var(--muted);
+            font-size: 1rem;
+            margin-top: 10px;
+            letter-spacing: 0.2px;
+        }
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: rgba(17, 40, 73, 0.8);
+            border: 1px solid var(--edge);
+            color: #bde9ff;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 1.1px;
+            margin-bottom: 14px;
+        }
         
-        .glass-panel { background: var(--panel); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 40px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        .glass-panel {
+            background: var(--panel);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid var(--edge);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow:
+                0 30px 70px -25px rgba(0,0,0,0.7),
+                inset 0 1px 0 rgba(255,255,255,0.1);
+        }
         
         .input-group { margin-bottom: 25px; }
-        .input-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 0.9rem; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px; }
-        .input-group input, .input-group textarea { width: 100%; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; font-size: 1rem; font-family: 'Inter', monospace; outline: none; transition: all 0.3s ease; box-sizing: border-box; }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.82rem;
+            color: #c6d7ec;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            padding: 15px;
+            background: rgba(2, 8, 20, 0.55);
+            border: 1px solid rgba(149, 171, 200, 0.28);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.98rem;
+            font-family: 'Space Grotesk', monospace;
+            outline: none;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+            box-sizing: border-box;
+        }
         .input-group textarea { min-height: 120px; resize: vertical; }
-        .input-group input:focus, .input-group textarea:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(56, 189, 248, 0.2); }
+        .input-group input:focus,
+        .input-group textarea:focus {
+            border-color: var(--accent2);
+            box-shadow: 0 0 0 4px rgba(46,196,255,0.13);
+            transform: translateY(-1px);
+        }
+        .input-hint {
+            margin-top: 8px;
+            color: #8ea5bf;
+            font-size: 0.82rem;
+        }
         
-        .btn-scan { width: 100%; padding: 18px; border: none; border-radius: 8px; background: linear-gradient(135deg, #0ea5e9, #3b82f6); color: white; font-size: 1.2rem; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 10px 20px -10px rgba(59, 130, 246, 0.5); }
-        .btn-scan:hover { transform: translateY(-2px); box-shadow: 0 15px 25px -10px rgba(59, 130, 246, 0.7); }
+        .btn-scan {
+            width: 100%;
+            padding: 17px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(110deg, var(--accent), var(--accent2));
+            color: #03212b;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 16px 30px -16px rgba(46,196,255,0.85);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-scan::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            left: -40%;
+            width: 40%;
+            height: 180%;
+            transform: rotate(20deg);
+            background: rgba(255,255,255,0.28);
+            transition: left 0.45s ease;
+        }
+        .btn-scan:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 35px -16px rgba(46,196,255,0.9);
+        }
+        .btn-scan:hover::before { left: 120%; }
         .btn-scan:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         
         /* Loading Animation */
         .scanning-ui { display: none; text-align: center; margin-top: 40px; }
-        .radar { position: relative; width: 100px; height: 100px; border-radius: 50%; border: 2px solid rgba(56, 189, 248, 0.3); margin: 0 auto; overflow: hidden; box-shadow: 0 0 20px rgba(56, 189, 248, 0.2); }
-        .radar::before { content: ''; position: absolute; top: 0; left: 50%; width: 50%; height: 50%; transform-origin: bottom left; background: linear-gradient(45deg, rgba(56, 189, 248, 0), rgba(56, 189, 248, 0.8)); animation: sweep 2s linear infinite; }
+        .radar { position: relative; width: 100px; height: 100px; border-radius: 50%; border: 2px solid rgba(46, 196, 255, 0.4); margin: 0 auto; overflow: hidden; box-shadow: 0 0 20px rgba(46, 196, 255, 0.25); }
+        .radar::before { content: ''; position: absolute; top: 0; left: 50%; width: 50%; height: 50%; transform-origin: bottom left; background: linear-gradient(45deg, rgba(46, 196, 255, 0), rgba(46, 196, 255, 0.95)); animation: sweep 2s linear infinite; }
         @keyframes sweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .scanning-text { color: var(--accent); margin-top: 20px; font-weight: 500; letter-spacing: 2px; animation: pulse 1.5s infinite; }
+        .scanning-text { color: var(--accent2); margin-top: 20px; font-weight: 600; letter-spacing: 2px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
         /* Results UI */
@@ -39,13 +186,20 @@
         
         .score-circle { display: inline-flex; justify-content: center; align-items: center; width: 120px; height: 120px; border-radius: 50%; font-size: 2.2rem; font-weight: 700; margin-bottom: 20px; border: 4px solid #fff; }
         .status-text { font-size: 1.8rem; font-weight: 700; text-transform: uppercase; margin: 10px 0; letter-spacing: 1px; }
-        .report-link { display: inline-block; margin-top: 20px; color: #94a3b8; text-decoration: none; border-bottom: 1px border-bottom; transition: color 0.3s; }
-        .report-link:hover { color: white; }
+        .report-link { display: inline-block; margin-top: 20px; color: #a7b9cc; text-decoration: none; border-bottom: 1px dashed rgba(167,185,204,0.5); transition: color 0.3s, border-color 0.3s; }
+        .report-link:hover { color: #e5f6ff; border-color: rgba(229,246,255,0.9); }
 
         .pirated .score-circle { border-color: var(--danger); color: var(--danger); box-shadow: 0 0 40px rgba(239, 68, 68, 0.4); }
         .pirated .status-text { color: var(--danger); }
         .clean .score-circle { border-color: var(--success); color: var(--success); box-shadow: 0 0 40px rgba(34, 197, 94, 0.4); }
         .clean .status-text { color: var(--success); }
+
+        @media (max-width: 640px) {
+            .dashboard { padding: 20px 12px; }
+            .glass-panel { padding: 20px; border-radius: 16px; }
+            .status-text { font-size: 1.4rem; }
+            .score-circle { width: 100px; height: 100px; font-size: 1.9rem; }
+        }
 
     </style>
 </head>
@@ -53,6 +207,7 @@
 
 <div class="dashboard">
     <div class="header">
+        <div class="header-badge">Live Forensic Mode</div>
         <h1>StreamTrace</h1>
         <p>Enterprise Anti-Piracy Forensic Engine</p>
     </div>
@@ -61,10 +216,12 @@
         <div class="input-group">
             <label>Original Source Broadcast Code or URL</label>
             <textarea id="orig_input" placeholder="Paste original stream URL or embed code (iframe/script/html)"></textarea>
+            <div class="input-hint">Accepts direct links and pasted iframe or script snippets.</div>
         </div>
         <div class="input-group">
             <label>Target Suspect Stream Code or URL</label>
             <textarea id="target_input" placeholder="Paste suspect stream URL or embed code (iframe/script/html)"></textarea>
+            <div class="input-hint">The first valid src or href URL will be used for scanning.</div>
         </div>
         <button id="scanBtn" class="btn-scan" onclick="startScan()">Initiate Forensic Scan</button>
 
